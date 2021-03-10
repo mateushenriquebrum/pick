@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 
 data class Deny(val reason: String)
 data class Confirm(val interviewer: String, val at: LocalDateTime, val spans: Int)
-class SetFreeSlotCalendar(private val rep: InterviewerRepository) {
+class SetInterviewerFreeSlots(private val rep: InterviewerRepository) {
     fun execute(interviewer: String, at: LocalDateTime, spans: Int): Either<Deny, Confirm> {
         val free = Free(at, spans, interviewer)
         val calendar = rep.getInterviewerCalendar(interviewer)
