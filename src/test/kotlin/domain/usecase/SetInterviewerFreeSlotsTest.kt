@@ -18,6 +18,7 @@ class SetInterviewerFreeSlotsTest {
     @Test
     fun `Interviewer should get a Confirmation when set a Free Slot on its Calendar`() {
         val rep:InterviewerRepository = mockk(relaxed = true);
+        every { rep.getInterviewerCalendar(any()) } returns Calendar()
         when(val result = SetInterviewerFreeSlots(rep).execute(interviewer, now, 10)) {
             is Either.Right -> {
                 assertEquals(result.b, Confirm(interviewer, now, 10))
