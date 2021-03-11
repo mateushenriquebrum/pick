@@ -23,7 +23,7 @@ class GetInterviewerSlotsTest {
         val rep: InterviewerRepository = mockk(relaxed = true);
         every { rep.getInterviewerCalendar(any()) } returns Calendar(
             Free(now, 10, interviewer),
-            Taken(Free(after, 10, interviewer), by)
+            Taken(after, 10, interviewer, by)
         )
         when (val result = GetInterviewerSlots(rep).execute(GetInterviewerSlots.Request(interviewer))) {
             is Either.Left -> fail()

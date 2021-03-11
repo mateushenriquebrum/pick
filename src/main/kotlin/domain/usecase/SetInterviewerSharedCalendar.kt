@@ -4,7 +4,7 @@ import arrow.core.Either
 import arrow.core.Either.Left
 import arrow.core.Either.Right
 
-class InterviewerShareCalendar(private val rep: InterviewerRepository, private val tok: InviteToken) {
+class SetInterviewerSharedCalendar(private val rep: InterviewerRepository, private val tok: InviteToken) {
 
     data class Request(val interviewer: String, val candidate: String)
     data class Response(val token: Token, val invited: String)

@@ -1,3 +1,5 @@
 package domain.slot
 
-class Taken(private val free: Free, val by: String) : Slot(free.at, free.spans)
+import java.time.LocalDateTime
+
+class Taken(at: LocalDateTime, spans: Long, val interviewer: String, val by: String) : Slot(at, spans)
