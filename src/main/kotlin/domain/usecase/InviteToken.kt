@@ -1,7 +1,6 @@
 package domain.usecase
 
+data class Token(val data: String)
 interface InviteToken {
-    data class Token(val data: String)
-
     fun createFor(interviewer: String, candidate: String): Token
 }
