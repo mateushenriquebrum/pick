@@ -27,7 +27,7 @@ class CalendarTest {
         var calendar = Calendar(fstSlot).add(sndSlot)
         when (calendar) {
             is Either.Left -> when (calendar.a) {
-                is Calendar.Error.NotAllowed -> assertTrue(true)
+                is Calendar.Response.NotAllowed -> assertTrue(true)
             }
             is Either.Right -> assertTrue(false)
         }
