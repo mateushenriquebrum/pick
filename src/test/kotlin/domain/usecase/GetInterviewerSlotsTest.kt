@@ -2,6 +2,7 @@ package domain.usecase
 
 import arrow.core.Either
 import domain.calendar.Calendar
+import domain.slot.Slot
 import domain.slot.Free
 import domain.slot.Taken
 import io.mockk.every

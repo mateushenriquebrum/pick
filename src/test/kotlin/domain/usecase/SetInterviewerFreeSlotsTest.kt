@@ -3,6 +3,8 @@ package domain.usecase
 import arrow.core.Either
 import domain.calendar.Calendar
 import domain.slot.Free
+import domain.usecase.SetInterviewerFreeSlots.Confirm
+import domain.usecase.SetInterviewerFreeSlots.Deny
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -22,7 +24,7 @@ class SetInterviewerFreeSlotsTest {
         when(val result = SetInterviewerFreeSlots(rep).execute(interviewer, now, 10)) {
             is Either.Right -> {
                 assertEquals(result.b, Confirm(interviewer, now, 10))
-                verify { rep.setFreeSlot(interviewer, Free(now, 10, interviewer)) }
+                verify { rep.setFreeSlot(Free(now, 10, interviewer)) }
             }
             is Either.Left -> fail()
         }
@@ -36,7 +38,7 @@ class SetInterviewerFreeSlotsTest {
             is Either.Right -> fail()
             is Either.Left -> {
                 assertEquals(result.a, Deny("Slot already set"))
-                verify (exactly = 0) { rep.setFreeSlot(any(), any()) }
+                verify (exactly = 0) { rep.setFreeSlot(any()) }
             }
         }
     }
