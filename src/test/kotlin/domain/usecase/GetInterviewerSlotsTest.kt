@@ -25,7 +25,7 @@ class GetInterviewerSlotsTest {
             Free(now, 10, interviewer),
             Taken(Free(after, 10, interviewer), by)
         )
-        when (val result = GetInterviewerSlots(rep).execute(Request(interviewer))) {
+        when (val result = GetInterviewerSlots(rep).execute(GetInterviewerSlots.Request(interviewer))) {
             is Either.Left -> fail()
             is Either.Right -> {
                 assertEquals(2, result.b.size)
