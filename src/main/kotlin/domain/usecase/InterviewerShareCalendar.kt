@@ -1,6 +1,10 @@
 package domain.usecase
 
 import arrow.core.Either
+import arrow.core.Either.Companion.left
+import arrow.core.Either.Companion.right
+import arrow.core.Either.Left
+import arrow.core.Either.Right
 import domain.calendar.Calendar
 
 class InterviewerShareCalendar(private val rep: InterviewerRepository, private val tok: InviteToken) {
@@ -13,9 +17,10 @@ class InterviewerShareCalendar(private val rep: InterviewerRepository, private v
         val (interviewer, candidate) = request
         val token = tok.createFor(interviewer, candidate)
         val calendar = rep.getInterviewerCalendar(interviewer)
+
         return when (calendar.invite(candidate)) {
-            is Either.Left -> Either.left(Deny("No Free Slots"))
-            is Either.Right -> Either.right(Response(token, candidate))
+            is Left -> Left(Deny("No Free Slots"))
+            is Right -> Right(Response(token, candidate))
         }
     }
 }

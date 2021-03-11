@@ -1,6 +1,8 @@
 package domain.usecase
 
 import arrow.core.Either
+import arrow.core.Either.Left
+import arrow.core.Either.Right
 import domain.calendar.Calendar
 import domain.slot.Free
 import domain.slot.Taken
@@ -29,7 +31,7 @@ class InterviewerSharesCalendarTest {
             Free(at, spans, interviewer)
         )
         when (val result = InterviewerShareCalendar(rep, tok).execute(Request(interviewer, candidate))) {
-            is Either.Right -> {
+            is Right -> {
                 val (token, invited) = result.b
                 assertNotNull(token)
                 assertEquals(invited, candidate)
@@ -46,8 +48,8 @@ class InterviewerSharesCalendarTest {
         )
         val tok: InviteToken = mockk(relaxed = true);
         when (val result = InterviewerShareCalendar(rep, tok).execute(Request(interviewer, candidate))) {
-            is Either.Right -> fail()
-            is Either.Left -> when (result.a){
+            is Right -> fail()
+            is Left -> when (result.a){
                 is Deny -> assertEquals(result.a.message, "No Free Slots")
             }
         }
