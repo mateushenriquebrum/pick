@@ -6,7 +6,6 @@ import domain.usecase.SetInvitedTakeSlot.Request
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 
@@ -17,19 +16,19 @@ class SetInvitedTakeSlotTest {
         val token = "any-token"
         val candidate = "candidate@gmail.com"
         val rep: InterviewerRepository = mockk(relaxed = true)
-        var now = LocalDateTime.now()
-        var spans = 10L
-        var interviewer = "interviewer@gmail.com"
+        val now = LocalDateTime.now()
+        val spans = 10L
+        val interv = "interviewer@gmail.com"
 
-        every { rep.getFreeSlotsById(id) } returns Free(now, spans, interviewer)
+        every { rep.getFreeSlotsById(id) } returns Free(now, spans, interv)
 
         when(val result = SetInvitedTakeSlot(rep).execute(Request(id, token, candidate))) {
             is Either.Left -> fail()
             is Either.Right -> {
                 val (from, to, interviewer) = result.b
-                assertFalse(from.isNullOrEmpty())
-                assertFalse(to.isNullOrEmpty())
-                assertFalse(interviewer.isNullOrEmpty())
+                assertFalse(from.isEmpty())
+                assertFalse(to.isEmpty())
+                assertFalse(interviewer.isEmpty())
             }
         }
     }
