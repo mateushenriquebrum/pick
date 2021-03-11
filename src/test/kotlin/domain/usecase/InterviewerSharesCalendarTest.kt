@@ -18,8 +18,8 @@ class InterviewerSharesCalendarTest {
     private val candidate = "candidate@gmail.com"
     private val another = "another@gmail.com"
     private val interviewer = "interviewer@gmail.com"
-    private val at = LocalDateTime.now();
-    private val spans = 15
+    private val at = LocalDateTime.now()
+    private val spans = 15L
     private val token = Token("token")
 
     @Test
@@ -36,23 +36,27 @@ class InterviewerSharesCalendarTest {
                 assertNotNull(token)
                 assertEquals(invited, candidate)
                 verify(exactly = 1) { tok.createFor(interviewer, candidate) }
-                verify(exactly = 1) { rep.setInvitationForCandidate(token, candidate, setOf(Free(at, spans, interviewer)))}
+                verify(exactly = 1) {
+                    rep.setInvitationForCandidate(
+                        token,
+                        candidate,
+                        setOf(Free(at, spans, interviewer))
+                    )
+                }
             }
         }
     }
 
     @Test
     fun `Interviewer should get and Deny if it has not Free Slots`() {
-        val rep: InterviewerRepository = mockk(relaxed = true);
+        val rep: InterviewerRepository = mockk(relaxed = true)
         every { rep.getInterviewerCalendar(interviewer) } returns Calendar(
             Taken(Free(at, spans, interviewer), another)
         )
-        val tok: InviteToken = mockk(relaxed = true);
+        val tok: InviteToken = mockk(relaxed = true)
         when (val result = InterviewerShareCalendar(rep, tok).execute(Request(interviewer, candidate))) {
             is Right -> fail()
-            is Left -> when (result.a) {
-                is Deny -> assertEquals(result.a.message, "No Free Slots")
-            }
+            is Left -> assertEquals(result.a.message, "No Free Slots")
         }
     }
 }

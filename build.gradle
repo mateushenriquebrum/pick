@@ -18,7 +18,7 @@ repositories {
 dependencies {
     implementation "io.arrow-kt:arrow-core:$arrow_version"
     implementation "io.arrow-kt:arrow-syntax:$arrow_version"
-    kapt    "io.arrow-kt:arrow-meta:$arrow_version"
+    kapt "io.arrow-kt:arrow-meta:$arrow_version"
     testImplementation(platform('org.junit:junit-bom:5.7.1'))
     testImplementation "io.mockk:mockk:$mockk_version"
     testImplementation('org.junit.jupiter:junit-jupiter')

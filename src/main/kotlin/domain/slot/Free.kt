@@ -2,7 +2,7 @@ package domain.slot
 
 import java.time.LocalDateTime
 
-class Free(at: LocalDateTime,spans: Int, private val interviewer: String): Slot(at, spans) {
+class Free(at: LocalDateTime, spans: Long, val interviewer: String) : Slot(at, spans) {
     fun takenBy(interviewee: String) = Taken(this, interviewee)
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

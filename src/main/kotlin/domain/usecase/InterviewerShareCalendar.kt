@@ -1,11 +1,8 @@
 package domain.usecase
 
 import arrow.core.Either
-import arrow.core.Either.Companion.left
-import arrow.core.Either.Companion.right
 import arrow.core.Either.Left
 import arrow.core.Either.Right
-import domain.calendar.Calendar
 
 class InterviewerShareCalendar(private val rep: InterviewerRepository, private val tok: InviteToken) {
 
