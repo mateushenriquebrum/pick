@@ -10,10 +10,11 @@ import java.time.LocalDateTime
 
 class CalendarTest {
     private var at = LocalDateTime.now();
+
     @Test
     fun `Calendar can be created with Free and Taken slots`() {
         val fstSlot = Free(at, 10, "")
-        val sndSlot = Taken(Free(at.plusMinutes(10), 10, ""),"");
+        val sndSlot = Taken(Free(at.plusMinutes(10), 10, ""), "");
         val trdSlot = Free(at.plusMinutes(20), 10, "")
         var calendar = Calendar(sndSlot, trdSlot, fstSlot)
         assertEquals(calendar.slots.map { at }, listOf(fstSlot, sndSlot, trdSlot).map { at })

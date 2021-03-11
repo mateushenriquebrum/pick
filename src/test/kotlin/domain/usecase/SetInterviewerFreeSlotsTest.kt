@@ -19,9 +19,9 @@ class SetInterviewerFreeSlotsTest {
 
     @Test
     fun `Interviewer should get a Confirmation when set a Free Slot on its Calendar`() {
-        val rep:InterviewerRepository = mockk(relaxed = true);
+        val rep: InterviewerRepository = mockk(relaxed = true);
         every { rep.getInterviewerCalendar(any()) } returns Calendar()
-        when(val result = SetInterviewerFreeSlots(rep).execute(interviewer, now, 10)) {
+        when (val result = SetInterviewerFreeSlots(rep).execute(interviewer, now, 10)) {
             is Either.Right -> {
                 assertEquals(result.b, Confirm(interviewer, now, 10))
                 verify { rep.setFreeSlot(Free(now, 10, interviewer)) }
@@ -32,13 +32,13 @@ class SetInterviewerFreeSlotsTest {
 
     @Test
     fun `Interviewer should get a Deny when set a existent Free Slot on its Calendar`() {
-        val rep:InterviewerRepository = mockk(relaxed = true);
+        val rep: InterviewerRepository = mockk(relaxed = true);
         every { rep.getInterviewerCalendar(any()) } returns Calendar(Free(now, 10, interviewer))
-        when(val result = SetInterviewerFreeSlots(rep).execute(interviewer, now, 10)) {
+        when (val result = SetInterviewerFreeSlots(rep).execute(interviewer, now, 10)) {
             is Either.Right -> fail()
             is Either.Left -> {
                 assertEquals(result.a, Deny("Slot already set"))
-                verify (exactly = 0) { rep.setFreeSlot(any()) }
+                verify(exactly = 0) { rep.setFreeSlot(any()) }
             }
         }
     }
