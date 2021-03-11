@@ -16,8 +16,10 @@ class Calendar(vararg slots: Slot) {
         else Either.right(Calendar(*(this.slots + toAdd).toTypedArray()))
     }
 
+    val free: Set<Free> = slots.filterIsInstance<Free>().toSet()
+
     fun invite(candidate: String): Either<Response.NotAllowed, Response.Allowed> {
-        return if (slots.filterIsInstance<Free>().isEmpty()) Either.left(Response.NotAllowed)
+        return if (free.isEmpty()) Either.left(Response.NotAllowed)
         else Either.right(Response.Allowed)
     }
 

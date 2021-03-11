@@ -20,7 +20,10 @@ class InterviewerShareCalendar(private val rep: InterviewerRepository, private v
 
         return when (calendar.invite(candidate)) {
             is Left -> Left(Deny("No Free Slots"))
-            is Right -> Right(Response(token, candidate))
+            is Right -> {
+                rep.setInvitationForCandidate(token, candidate, calendar.free)
+                Right(Response(token, candidate))
+            }
         }
     }
 }

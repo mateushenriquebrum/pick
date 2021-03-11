@@ -1,6 +1,5 @@
 package domain.usecase
 
-import arrow.core.Either
 import arrow.core.Either.Left
 import arrow.core.Either.Right
 import domain.calendar.Calendar
@@ -11,7 +10,6 @@ import domain.usecase.InterviewerShareCalendar.Request
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
@@ -22,11 +20,13 @@ class InterviewerSharesCalendarTest {
     private val interviewer = "interviewer@gmail.com"
     private val at = LocalDateTime.now();
     private val spans = 15
+    private val token = Token("token")
 
     @Test
-    fun `Interviewer should Share its Calendar to Candidate`() {
+    fun `Interviewer should Share its Calendar by token to Candidate`() {
         val rep: InterviewerRepository = mockk(relaxed = true)
         val tok: InviteToken = mockk(relaxed = true)
+        every { tok.createFor(interviewer, candidate) } returns token
         every { rep.getInterviewerCalendar(interviewer) } returns Calendar(
             Free(at, spans, interviewer)
         )
@@ -36,6 +36,7 @@ class InterviewerSharesCalendarTest {
                 assertNotNull(token)
                 assertEquals(invited, candidate)
                 verify(exactly = 1) { tok.createFor(interviewer, candidate) }
+                verify(exactly = 1) { rep.setInvitationForCandidate(token, candidate, setOf(Free(at, spans, interviewer)))}
             }
         }
     }
@@ -49,7 +50,7 @@ class InterviewerSharesCalendarTest {
         val tok: InviteToken = mockk(relaxed = true);
         when (val result = InterviewerShareCalendar(rep, tok).execute(Request(interviewer, candidate))) {
             is Right -> fail()
-            is Left -> when (result.a){
+            is Left -> when (result.a) {
                 is Deny -> assertEquals(result.a.message, "No Free Slots")
             }
         }
