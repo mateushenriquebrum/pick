@@ -22,7 +22,7 @@ class SetInterviewerSharedCalendarTest {
     private val token = Token("token")
 
     @Test
-    fun `Interviewer should Share its Calendar by token to Candidate`() {
+    fun `Interviewer should Share its Calendar by Token to a Candidate`() {
         val rep: InterviewerRepository = mockk(relaxed = true)
         val tok: InviteToken = mockk(relaxed = true)
         every { tok.createFor(interviewer, candidate) } returns token
@@ -33,13 +33,13 @@ class SetInterviewerSharedCalendarTest {
             is Right -> {
                 val (token, invited) = result.b
                 assertNotNull(token)
-                assertEquals(invited, candidate)
+                assertNotNull(invited)
                 verify(exactly = 1) { tok.createFor(interviewer, candidate) }
                 verify(exactly = 1) {
                     rep.setInvitationForCandidate(
-                        token,
-                        candidate,
-                        setOf(Free(at, spans, interviewer))
+                        any<Token>(),
+                        any<String>(),
+                        any<Set<Free>>()
                     )
                 }
             }
@@ -55,7 +55,7 @@ class SetInterviewerSharedCalendarTest {
         val tok: InviteToken = mockk(relaxed = true)
         when (val result = SetInterviewerSharedCalendar(rep, tok).execute(Request(interviewer, candidate))) {
             is Right -> fail()
-            is Left -> assertEquals(result.a.message, "No Free Slots")
+            is Left -> assertEquals(result.a.reason, "No Free Slots")
         }
     }
 }

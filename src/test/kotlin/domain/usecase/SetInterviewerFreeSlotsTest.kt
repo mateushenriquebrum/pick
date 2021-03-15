@@ -3,13 +3,10 @@ package domain.usecase
 import arrow.core.Either
 import domain.calendar.Calendar
 import domain.slot.Free
-import domain.usecase.SetInterviewerFreeSlots.Confirm
-import domain.usecase.SetInterviewerFreeSlots.Deny
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.fail
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime.now
 
@@ -23,7 +20,9 @@ class SetInterviewerFreeSlotsTest {
         every { rep.getInterviewerCalendar(any()) } returns Calendar()
         when (val result = SetInterviewerFreeSlots(rep).execute(interviewer, now, 10)) {
             is Either.Right -> {
-                assertEquals(result.b, Confirm(interviewer, now, 10))
+                assertNotNull(result.b.from)
+                assertNotNull(result.b.to)
+                assertNotNull(result.b.interviewer)
                 verify { rep.setFreeSlot(Free(now, 10, interviewer)) }
             }
             is Either.Left -> fail()
@@ -37,7 +36,7 @@ class SetInterviewerFreeSlotsTest {
         when (val result = SetInterviewerFreeSlots(rep).execute(interviewer, now, 10)) {
             is Either.Right -> fail()
             is Either.Left -> {
-                assertEquals(result.a, Deny("Slot already set"))
+                assertEquals(result.a.reason, "Slot already set")
                 verify(exactly = 0) { rep.setFreeSlot(any()) }
             }
         }

@@ -5,15 +5,20 @@ import arrow.core.Either.Companion.right
 import java.time.LocalDateTime
 
 class GetInterviewerSlots(private val rep: InterviewerRepository) {
-    data class Response(val at: LocalDateTime, val spans: Long)
     data class Request(val interviewer: String)
+    data class Slot(val from: String, val to: String)
 
-    fun execute(request: Request): Either<Nothing, Set<Response>> {
+    sealed class Response {
+        data class Fail(val reason: String)
+        data class Success(val interviewer: String, val slots: Set<Slot>)
+    }
+
+    fun execute(request: Request): Either<Response.Fail, Response.Success> {
         return rep
             .getInterviewerCalendar(request.interviewer)
             .slots
-            .map { Response(it.at, it.spans) }
+            .map { Slot(it.at.toString(), it.at.plusMinutes(it.spans).toString()) }
             .toSet()
-            .let { right(it) }
+            .let { right(Response.Success(request.interviewer, it)) }
     }
 }

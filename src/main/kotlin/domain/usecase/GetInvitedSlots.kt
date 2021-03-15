@@ -6,18 +6,20 @@ import arrow.core.Left
 class GetInvitedSlots(private val rep: InterviewerRepository) {
 
     data class Slot(val from: String, val to: String)
-    data class Response(val interviewer: String, val slots: Set<Slot>)
     data class Request(val token: String)
-    class Error
+    sealed class Response {
+        data class Fail(val reason: String)
+        data class Success(val interviewer: String, val slots: Set<Slot>)
+    }
 
-    fun execute(request: Request): Either<Error, Response> {
+    fun execute(request: Request): Either<Response.Fail, Response.Success> {
         val (token) = request
         val free = rep.getFreeSlotsByToken(Token(token))
-        return if (free.isEmpty()) Left(Error())
+        return if (free.isEmpty()) Left(Response.Fail("There is not any free slot"))
         else {
             val interviewer = free.map { it.interviewer }.first()
             Either.right(
-                Response(
+                Response.Success(
                     interviewer,
                     free.map { Slot(it.at.toString(), it.at.plusMinutes(it.spans).toString()) }.toSet()
                 )

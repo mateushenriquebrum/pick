@@ -28,7 +28,7 @@ class GetInterviewerSlotsTest {
         when (val result = GetInterviewerSlots(rep).execute(GetInterviewerSlots.Request(interviewer))) {
             is Either.Left -> fail()
             is Either.Right -> {
-                assertEquals(2, result.b.size)
+                assertEquals(2, result.b.slots.size)
                 verify(exactly = 1) { rep.getInterviewerCalendar(interviewer) }
             }
         }

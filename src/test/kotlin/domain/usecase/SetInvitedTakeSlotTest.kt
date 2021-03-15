@@ -18,17 +18,17 @@ class SetInvitedTakeSlotTest {
         val rep: InterviewerRepository = mockk(relaxed = true)
         val now = LocalDateTime.now()
         val spans = 10L
-        val interv = "interviewer@gmail.com"
+        val interviewer = "interviewer@gmail.com"
 
-        every { rep.getFreeSlotsById(id) } returns Free(now, spans, interv)
+        every { rep.getFreeSlotsById(id) } returns Free(now, spans, interviewer)
 
         when(val result = SetInvitedTakeSlot(rep).execute(Request(id, token, candidate))) {
             is Either.Left -> fail()
             is Either.Right -> {
                 val (from, to, interviewer) = result.b
-                assertFalse(from.isEmpty())
-                assertFalse(to.isEmpty())
-                assertFalse(interviewer.isEmpty())
+                assertNotNull(from)
+                assertNotNull(to)
+                assertNotNull(interviewer)
             }
         }
     }
