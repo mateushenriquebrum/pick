@@ -6,6 +6,9 @@ import domain.slot.Free
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.`in`
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime.now
@@ -20,9 +23,10 @@ class SetInterviewerFreeSlotsTest {
         every { rep.getInterviewerCalendar(any()) } returns Calendar()
         when (val result = SetInterviewerFreeSlots(rep).execute(interviewer, now, 10)) {
             is Either.Right -> {
-                assertNotNull(result.b.from)
-                assertNotNull(result.b.to)
-                assertNotNull(result.b.interviewer)
+                assertThat(result.b)
+                    .hasFieldOrPropertyWithValue("interviewer", interviewer)
+                    .hasFieldOrPropertyWithValue("from", now.toString())
+                    .hasFieldOrPropertyWithValue("to", now.plusMinutes(10).toString())
                 verify { rep.setFreeSlot(Free(now, 10, interviewer)) }
             }
             is Either.Left -> fail()
@@ -36,7 +40,8 @@ class SetInterviewerFreeSlotsTest {
         when (val result = SetInterviewerFreeSlots(rep).execute(interviewer, now, 10)) {
             is Either.Right -> fail()
             is Either.Left -> {
-                assertEquals(result.a.reason, "Slot already set")
+                assertThat(result.a.reason)
+                    .isEqualToIgnoringCase("Slot already set")
                 verify(exactly = 0) { rep.setFreeSlot(any()) }
             }
         }

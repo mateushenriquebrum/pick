@@ -5,7 +5,8 @@ import domain.slot.Free
 import domain.usecase.SetInvitedTakeSlot.Request
 import io.mockk.every
 import io.mockk.mockk
-import org.junit.jupiter.api.Assertions.*
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.fail
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 
@@ -23,12 +24,14 @@ class SetInvitedTakeSlotTest {
         every { rep.getFreeSlotsById(id) } returns Free(now, spans, interviewer)
 
         when(val result = SetInvitedTakeSlot(rep).execute(Request(id, token, candidate))) {
-            is Either.Left -> fail()
+            is Either.Left -> fail("Shouldn't happen")
             is Either.Right -> {
-                val (from, to, interviewer) = result.b
-                assertNotNull(from)
-                assertNotNull(to)
-                assertNotNull(interviewer)
+                assertThat(result.b)
+                    .isEqualTo( SetInvitedTakeSlot.Response.Success(
+                        now.toString(),
+                        now.plusMinutes(spans).toString(),
+                        interviewer
+                    ))
             }
         }
     }

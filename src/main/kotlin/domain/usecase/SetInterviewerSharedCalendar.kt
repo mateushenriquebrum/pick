@@ -21,7 +21,7 @@ class SetInterviewerSharedCalendar(private val rep: InterviewerRepository, priva
             is Left -> Left(Response.Fail("No Free Slots"))
             is Right -> {
                 rep.setInvitationForCandidate(token, candidate, calendar.free)
-                Right(Response.Success(token.toString(), candidate))
+                Right(Response.Success(token.data, candidate))
             }
         }
     }
