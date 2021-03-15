@@ -1,8 +1,8 @@
 package domain.usecase
 
 import arrow.core.Either
-import arrow.core.Either.Left
-import arrow.core.Either.Right
+import domain.usecase.SetInterviewerSharedCalendar.Response.Fail
+import domain.usecase.SetInterviewerSharedCalendar.Response.Success
 
 class SetInterviewerSharedCalendar(private val rep: InterviewerRepository, private val tok: InviteToken) {
 
@@ -12,17 +12,19 @@ class SetInterviewerSharedCalendar(private val rep: InterviewerRepository, priva
         data class Success(val token: String, val invited: String)
     }
 
-    fun execute(request: Request): Either<Response.Fail, Response.Success> {
+    fun execute(request: Request): Either<Fail, Success> {
         val (interviewer, candidate) = request
         val token = tok.createFor(interviewer, candidate)
         val calendar = rep.getInterviewerCalendar(interviewer)
 
-        return when (calendar.invite(candidate)) {
-            is Left -> Left(Response.Fail("No Free Slots"))
-            is Right -> {
+        return calendar.invite(candidate).bimap(
+            {
+                Fail("No Free Slots")
+            },
+            {
                 rep.setInvitationForCandidate(token, candidate, calendar.free)
-                Right(Response.Success(token.data, candidate))
+                Success(token.data, candidate)
             }
-        }
+        )
     }
 }
