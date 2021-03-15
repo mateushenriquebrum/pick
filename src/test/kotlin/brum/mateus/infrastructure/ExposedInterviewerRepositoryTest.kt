@@ -14,7 +14,10 @@ import java.time.LocalDateTime
 
 class ExposedInterviewerRepositoryTest {
 
-    var rep = ExposedInterviewerRepository()
+    val rep = ExposedInterviewerRepository()
+    val at = LocalDateTime.now()
+    val spans = 10L
+    val interviewer = "mateus@gmail.com"
 
     @BeforeEach
     fun before() {
@@ -31,11 +34,10 @@ class ExposedInterviewerRepositoryTest {
         }
     }
 
-
     @Test
     fun `Should insert a Free Slot`() {
         transaction {
-            rep.setFreeSlot(Free(LocalDateTime.now(), 10, "mateus@gmail.com"))
+            rep.setFreeSlot(Free(at, spans, interviewer))
             assertThat(TableSlots.selectAll()).hasSize(1)
         }
     }
