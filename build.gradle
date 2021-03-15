@@ -1,11 +1,15 @@
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '1.4.21'
-    id "org.jetbrains.kotlin.kapt" version "1.4.21"
+    id 'org.jetbrains.kotlin.jvm' version '1.4.30'
+    id "org.jetbrains.kotlin.kapt" version "1.4.30"
+    id 'org.jetbrains.kotlin.plugin.serialization' version '1.4.30'
     id 'application'
 }
 
 def arrow_version = "0.11.0"
 def mockk_version = "1.10.6"
+def ktor_version = "1.5.2"
+def exposed_version = "0.29.1"
+
 
 group = 'brum.mateus'
 version = '1.0-SNAPSHOT'
@@ -25,14 +29,21 @@ dependencies {
     implementation "io.arrow-kt:arrow-core:$arrow_version"
     implementation "io.arrow-kt:arrow-syntax:$arrow_version"
     implementation "org.jetbrains.kotlin:kotlin-script-runtime:1.4.21"
-    implementation "io.ktor:ktor-server-core:1.5.2"
-    implementation "io.ktor:ktor-server-netty:1.5.2"
+    implementation "io.ktor:ktor-server-core:$ktor_version"
+    implementation "io.ktor:ktor-server-netty:$ktor_version"
+    implementation "io.ktor:ktor-serialization:$ktor_version"
     implementation "ch.qos.logback:logback-classic:1.2.3"
+    implementation "org.jetbrains.exposed:exposed-core:$exposed_version"
+    implementation "org.jetbrains.exposed:exposed-dao:$exposed_version"
+    implementation "org.jetbrains.exposed:exposed-jdbc:$exposed_version"
+    implementation "org.jetbrains.exposed:exposed-java-time:$exposed_version"
     kapt "io.arrow-kt:arrow-meta:$arrow_version"
+    testImplementation "com.h2database:h2:1.3.148"
     testImplementation(platform('org.junit:junit-bom:5.7.1'))
     testImplementation "io.mockk:mockk:$mockk_version"
     testImplementation "org.junit.jupiter:junit-jupiter"
     testImplementation "org.assertj:assertj-core:2.9.1"
+    testImplementation "io.ktor:ktor-server-tests:$ktor_version"
 }
 
 
