@@ -1,6 +1,8 @@
 package brum.mateus.domain.usecase
 
 import arrow.core.Either
+import arrow.core.Some
+import arrow.core.extensions.option.foldable.get
 
 class SetInvitedTakeSlot(private val rep: InterviewerRepository) {
     data class Request(val slotId: String, val token: String, val candidate: String)
@@ -12,7 +14,7 @@ class SetInvitedTakeSlot(private val rep: InterviewerRepository) {
 
     fun execute(request: Request): Either<Response.Fail, Response.Success> {
         val free = rep.getFreeSlotsById(request.slotId)
-        val taken = free.takenBy(request.candidate)
+        val taken = free!!.takenBy(request.candidate)
         rep.setTakenSlotForCandidate(taken)
         val result = taken.let {
             Response.Success(

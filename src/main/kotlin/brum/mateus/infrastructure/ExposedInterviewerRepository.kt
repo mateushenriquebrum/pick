@@ -1,12 +1,13 @@
 package brum.mateus.infrastructure
 
+import arrow.core.OptionOf
+import arrow.core.extensions.list.foldable.firstOrNone
 import brum.mateus.domain.calendar.Calendar
 import brum.mateus.domain.slot.Free
 import brum.mateus.domain.slot.Taken
 import brum.mateus.domain.usecase.InterviewerRepository
 import brum.mateus.domain.usecase.Token
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.`java-time`.datetime
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.UUID
@@ -59,11 +60,11 @@ class ExposedInterviewerRepository : InterviewerRepository {
             .toSet()
     }
 
-    override fun getFreeSlotsById(slotId: String): Free = transaction{
-        TableSlots.select { TableSlots.id eq slotId }
+    override fun getFreeSlotsById(slotId: String): Free? = transaction{
+        TableSlots.select { TableSlots.id eq slotId and TableSlots.interviewee.isNull() }
             .map {
                 Free(it[TableSlots.at], it[TableSlots.spans], it[TableSlots.interviewer])
-            }.first()
+            }.firstOrNull()
     }
 
     override fun setTakenSlotForCandidate(taken: Taken): Unit = transaction {
