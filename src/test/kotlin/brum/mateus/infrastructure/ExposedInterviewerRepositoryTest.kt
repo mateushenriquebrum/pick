@@ -77,12 +77,12 @@ class ExposedInterviewerRepositoryTest {
         }
     }
 
-    @Ignore
+    @Test
     fun `Should set an Slot as Free`() {
         transaction {
             fixture()
             val free = rep.getFreeSlotsById("without-candidate") as Free
-            rep.setInvitationForCandidate(Token("123"), "new.candidate@gmail.com", setOf(free))
+            rep.setInvitationForCandidate(Token("123"), "new.candidate@gmail.com", setOf(free.id))
             assertThat(TableSlots.select { TableSlots.interviewee eq "new.candidate@gmail.com" }).hasSize(1)
         }
     }

@@ -4,7 +4,7 @@ import java.time.LocalDateTime
 import java.util.*
 
 
-sealed class SlotId(val id: String) {
+sealed class SlotId(val data: String) {
     class NewSlotId: SlotId(UUID.randomUUID().toString())
     class SomeSlotId(id: String): SlotId(id)
 }

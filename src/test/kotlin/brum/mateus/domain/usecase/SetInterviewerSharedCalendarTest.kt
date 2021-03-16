@@ -42,7 +42,7 @@ class SetInterviewerSharedCalendarTest {
                     rep.setInvitationForCandidate(
                         any<Token>(),
                         any<String>(),
-                        any<Set<Free>>()
+                        any<Set<SlotId>>()
                     )
                 }
             }

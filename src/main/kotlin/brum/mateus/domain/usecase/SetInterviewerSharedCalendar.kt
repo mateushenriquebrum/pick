@@ -22,7 +22,7 @@ class SetInterviewerSharedCalendar(private val rep: InterviewerRepository, priva
                 Fail("No Free Slots")
             },
             {
-                rep.setInvitationForCandidate(token, candidate, calendar.free)
+                rep.setInvitationForCandidate(token, candidate, calendar.free.map { it.id }.toSet())
                 Success(token.data, candidate)
             }
         )
