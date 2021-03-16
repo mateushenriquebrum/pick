@@ -1,13 +1,14 @@
 package brum.mateus.infrastructure
 
 import brum.mateus.domain.slot.Free
+import brum.mateus.domain.slot.SlotId
+import brum.mateus.domain.slot.SlotId.NewSlotId
+import brum.mateus.domain.usecase.Token
 import brum.mateus.infrastructure.ExposedInterviewerRepository.TableSlots
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.junit.Ignore
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -54,7 +55,7 @@ class ExposedInterviewerRepositoryTest {
     @Test
     fun `Should insert a Free Slot`() {
         transaction {
-            rep.setFreeSlot(Free(at, spans, interviewer))
+            rep.setFreeSlot(Free(NewSlotId(), at, spans, interviewer))
             assertThat(TableSlots.selectAll()).hasSize(1)
         }
     }
@@ -73,6 +74,16 @@ class ExposedInterviewerRepositoryTest {
         transaction {
             fixture()
             assertThat(rep.getInterviewerCalendar("int@gmail.com").slots).hasSize(2)
+        }
+    }
+
+    @Ignore
+    fun `Should set an Slot as Free`() {
+        transaction {
+            fixture()
+            val free = rep.getFreeSlotsById("without-candidate") as Free
+            rep.setInvitationForCandidate(Token("123"), "new.candidate@gmail.com", setOf(free))
+            assertThat(TableSlots.select { TableSlots.interviewee eq "new.candidate@gmail.com" }).hasSize(1)
         }
     }
 }

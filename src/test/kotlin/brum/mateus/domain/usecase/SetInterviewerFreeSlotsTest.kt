@@ -3,6 +3,8 @@ package brum.mateus.domain.usecase
 import arrow.core.Either
 import brum.mateus.domain.calendar.Calendar
 import brum.mateus.domain.slot.Free
+import brum.mateus.domain.slot.SlotId
+import brum.mateus.domain.slot.SlotId.NewSlotId
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -25,7 +27,7 @@ class SetInterviewerFreeSlotsTest {
                     .hasFieldOrPropertyWithValue("interviewer", interviewer)
                     .hasFieldOrPropertyWithValue("from", now.toString())
                     .hasFieldOrPropertyWithValue("to", now.plusMinutes(10).toString())
-                verify { rep.setFreeSlot(Free(now, 10, interviewer)) }
+                verify { rep.setFreeSlot(Free(NewSlotId(), now, 10, interviewer)) }
             }
             is Either.Left -> fail()
         }
@@ -34,7 +36,7 @@ class SetInterviewerFreeSlotsTest {
     @Test
     fun `Interviewer should get a Deny when set a existent Free Slot on its Calendar`() {
         val rep: InterviewerRepository = mockk(relaxed = true);
-        every { rep.getInterviewerCalendar(any()) } returns Calendar(Free(now, 10, interviewer))
+        every { rep.getInterviewerCalendar(any()) } returns Calendar(Free(NewSlotId(), now, 10, interviewer))
         when (val result = SetInterviewerFreeSlots(rep).execute(interviewer, now, 10)) {
             is Either.Right -> fail()
             is Either.Left -> {

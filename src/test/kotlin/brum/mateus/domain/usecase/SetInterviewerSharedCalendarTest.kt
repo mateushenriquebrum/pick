@@ -4,6 +4,8 @@ import arrow.core.Either.Left
 import arrow.core.Either.Right
 import brum.mateus.domain.calendar.Calendar
 import brum.mateus.domain.slot.Free
+import brum.mateus.domain.slot.SlotId
+import brum.mateus.domain.slot.SlotId.NewSlotId
 import brum.mateus.domain.slot.Taken
 import brum.mateus.domain.usecase.SetInterviewerSharedCalendar.Request
 import brum.mateus.domain.usecase.SetInterviewerSharedCalendar.Response.Success
@@ -28,7 +30,7 @@ class SetInterviewerSharedCalendarTest {
         val tok: InviteToken = mockk(relaxed = true)
         every { tok.createFor(interviewer, candidate) } returns token
         every { rep.getInterviewerCalendar(interviewer) } returns Calendar(
-            Free(at, spans, interviewer)
+            Free(NewSlotId(), at, spans, interviewer)
         )
         when (val result = SetInterviewerSharedCalendar(rep, tok).execute(Request(interviewer, candidate))) {
             is Left -> fail("Shouldn't happen")
@@ -51,7 +53,7 @@ class SetInterviewerSharedCalendarTest {
     fun `Interviewer should get and Fail if it has not Free Slots`() {
         val rep: InterviewerRepository = mockk(relaxed = true)
         every { rep.getInterviewerCalendar(interviewer) } returns Calendar(
-            Taken(at, spans, interviewer, another)
+            Taken(NewSlotId(), at, spans, interviewer, another)
         )
         val tok: InviteToken = mockk(relaxed = true)
         when (val result = SetInterviewerSharedCalendar(rep, tok).execute(Request(interviewer, candidate))) {

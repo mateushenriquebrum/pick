@@ -3,6 +3,8 @@ package brum.mateus.domain.usecase
 import arrow.core.Either
 import brum.mateus.domain.calendar.Calendar
 import brum.mateus.domain.slot.Free
+import brum.mateus.domain.slot.SlotId
+import brum.mateus.domain.slot.SlotId.NewSlotId
 import brum.mateus.domain.slot.Taken
 import io.mockk.every
 import io.mockk.mockk
@@ -22,8 +24,8 @@ class GetInterviewerSlotsTest {
     fun `Interviewer should get all its Slots`() {
         val rep: InterviewerRepository = mockk(relaxed = true);
         every { rep.getInterviewerCalendar(any()) } returns Calendar(
-            Free(now, spans, interviewer),
-            Taken(after, spans, interviewer, by)
+            Free(NewSlotId(), now, spans, interviewer),
+            Taken(NewSlotId(), after, spans, interviewer, by)
         )
         when (val result = GetInterviewerSlots(rep).execute(GetInterviewerSlots.Request(interviewer))) {
             is Either.Left -> fail()

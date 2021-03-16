@@ -1,5 +1,6 @@
 package brum.mateus.domain.slot
 
+import brum.mateus.domain.slot.SlotId.NewSlotId
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
@@ -13,7 +14,7 @@ class FreeTest {
     @Test
     fun `A Free slot can be set to Taken by an interviewer`() {
         var interviewee = "interviewee@gmail.com";
-        var free = Free(at, 15, someInterviewer);
+        var free = Free(NewSlotId(), at, 15, someInterviewer);
         var taken = free.takenBy(interviewee);
         assertEquals(taken.by, interviewee)
     }
@@ -22,9 +23,9 @@ class FreeTest {
     fun `A Free Slot cannot intersect with another Free Slot`() {
         var tenMinLater = at.plusMinutes(10);
         var fifteenMinLater = at.plusMinutes(15);
-        var fstFree = Free(at, 15, someInterviewer);
-        var sndFree = Free(tenMinLater, 15, someInterviewer);
-        var trdFree = Free(fifteenMinLater, 15, someInterviewer);
+        var fstFree = Free(NewSlotId(), at, 15, someInterviewer);
+        var sndFree = Free(NewSlotId(), tenMinLater, 15, someInterviewer);
+        var trdFree = Free(NewSlotId(), fifteenMinLater, 15, someInterviewer);
         assertTrue(fstFree.intersect(fstFree))
         assertTrue(fstFree.intersect(sndFree))
         assertTrue(sndFree.intersect(trdFree))

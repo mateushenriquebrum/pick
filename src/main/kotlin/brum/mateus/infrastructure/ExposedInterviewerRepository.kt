@@ -4,6 +4,8 @@ import arrow.core.OptionOf
 import arrow.core.extensions.list.foldable.firstOrNone
 import brum.mateus.domain.calendar.Calendar
 import brum.mateus.domain.slot.Free
+import brum.mateus.domain.slot.SlotId
+import brum.mateus.domain.slot.SlotId.NewSlotId
 import brum.mateus.domain.slot.Taken
 import brum.mateus.domain.usecase.InterviewerRepository
 import brum.mateus.domain.usecase.Token
@@ -36,9 +38,9 @@ class ExposedInterviewerRepository : InterviewerRepository {
             TableSlots.interviewer eq interviewer
         }.map {
             if (it[TableSlots.interviewee].isNullOrEmpty()) {
-                Free(it[TableSlots.at], it[TableSlots.spans], it[TableSlots.interviewer])
+                Free(NewSlotId(), it[TableSlots.at], it[TableSlots.spans], it[TableSlots.interviewer])
             } else {
-                Taken(it[TableSlots.at], it[TableSlots.spans], it[TableSlots.interviewer], it[TableSlots.interviewee].toString())
+                Taken(NewSlotId(), it[TableSlots.at], it[TableSlots.spans], it[TableSlots.interviewer], it[TableSlots.interviewee].toString())
             }
         }.let {
             Calendar(*it.toTypedArray())
@@ -55,7 +57,7 @@ class ExposedInterviewerRepository : InterviewerRepository {
     override fun getFreeSlotsByToken(token: Token): Set<Free> = transaction {
         TableSlots.select { TableSlots.token eq token.data }
             .map {
-                Free(it[TableSlots.at], it[TableSlots.spans], it[TableSlots.interviewer])
+                Free(NewSlotId(), it[TableSlots.at], it[TableSlots.spans], it[TableSlots.interviewer])
             }
             .toSet()
     }
@@ -63,7 +65,7 @@ class ExposedInterviewerRepository : InterviewerRepository {
     override fun getFreeSlotsById(slotId: String): Free? = transaction{
         TableSlots.select { TableSlots.id eq slotId and TableSlots.interviewee.isNull() }
             .map {
-                Free(it[TableSlots.at], it[TableSlots.spans], it[TableSlots.interviewer])
+                Free(NewSlotId(), it[TableSlots.at], it[TableSlots.spans], it[TableSlots.interviewer])
             }.firstOrNull()
     }
 

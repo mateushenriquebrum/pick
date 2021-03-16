@@ -3,6 +3,8 @@ package brum.mateus.domain.usecase
 import arrow.core.Either.Left
 import arrow.core.Either.Right
 import brum.mateus.domain.slot.Free
+import brum.mateus.domain.slot.SlotId
+import brum.mateus.domain.slot.SlotId.NewSlotId
 import brum.mateus.domain.usecase.GetInvitedSlots.Request
 import io.mockk.every
 import io.mockk.mockk
@@ -22,7 +24,7 @@ class GetInvitedSlotsTest {
     fun `Candidate should get Interviewer's Slots by Token`() {
         val rep: InterviewerRepository = mockk(relaxed = true)
         every { rep.getFreeSlotsByToken(Token(token)) } returns setOf(
-            Free(now, spans, interviewer)
+            Free(NewSlotId(), now, spans, interviewer)
         )
         when (val result = GetInvitedSlots(rep).execute(Request(token))) {
             is Left -> fail()

@@ -1,8 +1,7 @@
 package brum.mateus.domain.usecase
 
 import arrow.core.Either
-import arrow.core.Some
-import arrow.core.extensions.option.foldable.get
+import arrow.core.Right
 
 class SetInvitedTakeSlot(private val rep: InterviewerRepository) {
     data class Request(val slotId: String, val token: String, val candidate: String)
@@ -23,7 +22,7 @@ class SetInvitedTakeSlot(private val rep: InterviewerRepository) {
                 it.interviewer
             )
         }
-        return Either.right(result)
+        return Right(result)
         // exception:
         //// id do not exists
         //// slot is not free

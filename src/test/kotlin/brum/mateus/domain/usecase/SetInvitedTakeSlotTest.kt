@@ -2,6 +2,8 @@ package brum.mateus.domain.usecase
 
 import arrow.core.Either
 import brum.mateus.domain.slot.Free
+import brum.mateus.domain.slot.SlotId
+import brum.mateus.domain.slot.SlotId.NewSlotId
 import brum.mateus.domain.usecase.SetInvitedTakeSlot.Request
 import io.mockk.every
 import io.mockk.mockk
@@ -21,7 +23,7 @@ class SetInvitedTakeSlotTest {
         val spans = 10L
         val interviewer = "interviewer@gmail.com"
 
-        every { rep.getFreeSlotsById(id) } returns Free(now, spans, interviewer)
+        every { rep.getFreeSlotsById(id) } returns Free(NewSlotId(), now, spans, interviewer)
 
         when(val result = SetInvitedTakeSlot(rep).execute(Request(id, token, candidate))) {
             is Either.Left -> fail("Shouldn't happen")

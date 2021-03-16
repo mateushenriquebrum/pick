@@ -2,6 +2,8 @@ package brum.mateus.domain.usecase
 
 import arrow.core.Either
 import brum.mateus.domain.slot.Free
+import brum.mateus.domain.slot.SlotId
+import brum.mateus.domain.slot.SlotId.NewSlotId
 import java.time.LocalDateTime
 
 class SetInterviewerFreeSlots(private val rep: InterviewerRepository) {
@@ -12,7 +14,7 @@ class SetInterviewerFreeSlots(private val rep: InterviewerRepository) {
     }
 
     fun execute(interviewer: String, at: LocalDateTime, spans: Long): Either<Response.Fail, Response.Success> {
-        val free = Free(at, spans, interviewer)
+        val free = Free(NewSlotId(), at, spans, interviewer)
         val calendar = rep.getInterviewerCalendar(interviewer)
         return calendar.add(free).bimap(
             {
