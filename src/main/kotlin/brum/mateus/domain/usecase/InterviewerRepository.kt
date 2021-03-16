@@ -11,6 +11,6 @@ interface InterviewerRepository {
     fun getInterviewerCalendar(interviewer: String): Calendar
     fun setInvitationForCandidate(token: Token, candidate: String, slots: Set<SlotId>)
     fun getFreeSlotsByToken(token: Token): Set<Free>
-    fun getFreeSlotsById(slotId: String): Free?
+    fun getFreeSlotsById(slotId: SlotId): Free?
     fun setTakenSlotForCandidate(taken: Taken)
 }

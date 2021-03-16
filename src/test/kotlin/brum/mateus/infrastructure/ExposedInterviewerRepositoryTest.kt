@@ -1,14 +1,13 @@
 package brum.mateus.infrastructure
 
 import brum.mateus.domain.slot.Free
-import brum.mateus.domain.slot.SlotId
 import brum.mateus.domain.slot.SlotId.NewSlotId
+import brum.mateus.domain.slot.SlotId.SomeSlotId
 import brum.mateus.domain.usecase.Token
 import brum.mateus.infrastructure.ExposedInterviewerRepository.TableSlots
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.junit.Ignore
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -42,6 +41,7 @@ class ExposedInterviewerRepositoryTest {
             it[TableSlots.spans] = 10
             it[TableSlots.interviewer] = "int@gmail.com"
             it[TableSlots.interviewee] = "can@gmail.com"
+            it[TableSlots.token] = "1234"
         }
     }
 
@@ -53,7 +53,7 @@ class ExposedInterviewerRepositoryTest {
     }
 
     @Test
-    fun `Should insert a Free Slot`() {
+    fun `setFreeSlot`() {
         transaction {
             rep.setFreeSlot(Free(NewSlotId(), at, spans, interviewer))
             assertThat(TableSlots.selectAll()).hasSize(1)
@@ -61,16 +61,16 @@ class ExposedInterviewerRepositoryTest {
     }
 
     @Test
-    fun `Should fetch just Free Slots`() {
+    fun `getFreeSlotsById`() {
         transaction {
             fixture()
-            assertThat(rep.getFreeSlotsById("without-candidate")).isNotNull
-            assertThat(rep.getFreeSlotsById("with-candidate")).isNull()
+            assertThat(rep.getFreeSlotsById(SomeSlotId("without-candidate"))).isNotNull
+            assertThat(rep.getFreeSlotsById(SomeSlotId("with-candidate"))).isNull()
         }
     }
 
     @Test
-    fun `Should fetch Interviewer Calendar`() {
+    fun `getInterviewerCalendar`() {
         transaction {
             fixture()
             assertThat(rep.getInterviewerCalendar("int@gmail.com").slots).hasSize(2)
@@ -78,11 +78,33 @@ class ExposedInterviewerRepositoryTest {
     }
 
     @Test
-    fun `Should set an Slot as Free`() {
+    fun `setInvitationForCandidate`() {
         transaction {
             fixture()
-            val free = rep.getFreeSlotsById("without-candidate") as Free
+            val free = rep.getFreeSlotsById(SomeSlotId("without-candidate")) as Free
             rep.setInvitationForCandidate(Token("123"), "new.candidate@gmail.com", setOf(free.id))
+            assertThat(TableSlots.select { TableSlots.interviewee eq "new.candidate@gmail.com" and (TableSlots.token eq "123") }).hasSize(
+                1
+            )
+        }
+    }
+
+    @Test
+    fun `getFreeSlotsByToken`() {
+        transaction {
+            fixture()
+            val free = rep.getFreeSlotsByToken(Token("1234"))
+            assertThat(free).hasSize(1)
+        }
+    }
+
+    @Test
+    fun `setTakenSlotForCandidate`() {
+        transaction {
+            fixture()
+            val free = rep.getFreeSlotsById(SomeSlotId("without-candidate")) as Free
+            val taken = free.takenBy("new.candidate@gmail.com")
+            rep.setTakenSlotForCandidate(taken)
             assertThat(TableSlots.select { TableSlots.interviewee eq "new.candidate@gmail.com" }).hasSize(1)
         }
     }

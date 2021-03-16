@@ -4,6 +4,7 @@ import arrow.core.Either
 import brum.mateus.domain.slot.Free
 import brum.mateus.domain.slot.SlotId
 import brum.mateus.domain.slot.SlotId.NewSlotId
+import brum.mateus.domain.slot.SlotId.SomeSlotId
 import brum.mateus.domain.usecase.SetInvitedTakeSlot.Request
 import io.mockk.every
 import io.mockk.mockk
@@ -15,7 +16,7 @@ import java.time.LocalDateTime
 class SetInvitedTakeSlotTest {
     @Test
     fun `Invited should Take a Free Slot`() {
-        val id = "any-slot-id"
+        val id = SomeSlotId("any-slot-id")
         val token = "any-token"
         val candidate = "candidate@gmail.com"
         val rep: InterviewerRepository = mockk(relaxed = true)
@@ -23,9 +24,9 @@ class SetInvitedTakeSlotTest {
         val spans = 10L
         val interviewer = "interviewer@gmail.com"
 
-        every { rep.getFreeSlotsById(id) } returns Free(NewSlotId(), now, spans, interviewer)
+        every { rep.getFreeSlotsById(any()) } returns Free(id, now, spans, interviewer)
 
-        when(val result = SetInvitedTakeSlot(rep).execute(Request(id, token, candidate))) {
+        when(val result = SetInvitedTakeSlot(rep).execute(Request(id.data, token, candidate))) {
             is Either.Left -> fail("Shouldn't happen")
             is Either.Right -> {
                 assertThat(result.b)
