@@ -3,7 +3,7 @@ package brum.mateus.domain.usecase
 import arrow.core.Either
 import arrow.core.Left
 
-class GetInvitedSlots(private val rep: InterviewerRepository) {
+class GetOfferedSlots(private val rep: InterviewerRepository) {
 
     data class Slot(val from: String, val to: String)
     data class Request(val token: String)

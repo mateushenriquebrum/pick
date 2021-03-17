@@ -2,10 +2,8 @@ package brum.mateus.domain.usecase
 
 import arrow.core.Either
 import brum.mateus.domain.slot.Free
-import brum.mateus.domain.slot.SlotId
-import brum.mateus.domain.slot.SlotId.NewSlotId
 import brum.mateus.domain.slot.SlotId.SomeSlotId
-import brum.mateus.domain.usecase.SetInvitedTakeSlot.Request
+import brum.mateus.domain.usecase.SetTakenSlot.Request
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -13,7 +11,7 @@ import org.assertj.core.api.Assertions.fail
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 
-class SetInvitedTakeSlotTest {
+class SetTakenSlotTest {
     @Test
     fun `Invited should Take a Free Slot`() {
         val id = SomeSlotId("any-slot-id")
@@ -26,11 +24,11 @@ class SetInvitedTakeSlotTest {
 
         every { rep.getFreeSlotsById(any()) } returns Free(id, now, spans, interviewer)
 
-        when(val result = SetInvitedTakeSlot(rep).execute(Request(id.data, token, candidate))) {
+        when(val result = SetTakenSlot(rep).execute(Request(id.data, token, candidate))) {
             is Either.Left -> fail("Shouldn't happen")
             is Either.Right -> {
                 assertThat(result.b)
-                    .isEqualTo( SetInvitedTakeSlot.Response.Success(
+                    .isEqualTo( SetTakenSlot.Response.Success(
                         now.toString(),
                         now.plusMinutes(spans).toString(),
                         interviewer

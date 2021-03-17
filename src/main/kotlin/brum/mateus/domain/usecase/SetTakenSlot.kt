@@ -5,7 +5,7 @@ import arrow.core.Right
 import brum.mateus.domain.slot.SlotId
 import brum.mateus.domain.slot.SlotId.SomeSlotId
 
-class SetInvitedTakeSlot(private val rep: InterviewerRepository) {
+class SetTakenSlot(private val rep: InterviewerRepository) {
     data class Request(val slotId: String, val token: String, val candidate: String)
 
     sealed class Response {
